@@ -95,8 +95,7 @@ jobs:
     needs: cache-toolchains-posix
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -165,8 +164,7 @@ jobs:
     needs: cache-toolchains-posix
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -241,8 +239,7 @@ jobs:
     needs: cache-toolchains-win
     runs-on: windows-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -308,8 +305,7 @@ jobs:
     needs: cache-toolchains-mac
     runs-on: macos-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -363,8 +359,7 @@ jobs:
     needs: cache-toolchains-mac
     runs-on: macos-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -399,8 +394,7 @@ jobs:
     needs: cache-toolchains-posix
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
     strategy:
       fail-fast: false
       matrix:
