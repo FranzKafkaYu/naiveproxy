@@ -1,4 +1,6 @@
 #!/bin/sh
+
+#Exit immediately if a command exists with a non-zero status
 set -e
 
 export TMPDIR="$PWD/tmp"
@@ -19,6 +21,7 @@ else
     symbol_level=0"
 fi
 
+#configure compiler
 . ./get-sysroot.sh
 
 if [ "$CCACHE" ]; then

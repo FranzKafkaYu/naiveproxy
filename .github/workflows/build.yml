@@ -14,9 +14,11 @@ env:
   CCACHE_MAXSIZE: 200M
   CCACHE_MAXFILES: 0
   SCCACHE_CACHE_SIZE: 200M
+#here we need setup some dependencies for compile enviroment
 jobs:
+  #first we need prepare for Ubuntu,which will be used to compile for Linux/Android/OpenWrt
   cache-toolchains-posix:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Cache toolchains (Linux, OpenWrt, Android)
@@ -48,8 +50,9 @@ jobs:
           if [ ! -f qemu-user-static*.deb ]; then
             wget https://snapshot.debian.org/archive/debian/20220515T152741Z/pool/main/q/qemu/qemu-user-static_7.0%2Bdfsg-6_amd64.deb
           fi
+  #for Windows compile
   cache-toolchains-win:
-    runs-on: windows-2019
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
       - name: Cache toolchains
@@ -78,8 +81,9 @@ jobs:
             curl -LO https://github.com/ninja-build/ninja/releases/download/v1.10.2/ninja-win.zip
             unzip ninja-win.zip -d ~/bin
           fi
+  #prepare for macos compile,this is used to compile Macos/Ios version
   cache-toolchains-mac:
-    runs-on: macos-11
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v3
@@ -91,9 +95,13 @@ jobs:
           key: toolchains-pgo-mac-${{ hashFiles('CHROMIUM_VERSION') }}-v${{ env.CACHE_EPOCH }}
       - run: EXTRA_FLAGS='target_cpu="x64"' ./get-clang.sh
       - run: EXTRA_FLAGS='target_cpu="arm64"' ./get-clang.sh
+  #build for linux platform
   linux:
     needs: cache-toolchains-posix
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -158,9 +166,13 @@ jobs:
         run: hub release edit -a ${{ env.BUNDLE }}.tar.xz -m "" "${GITHUB_REF##*/}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #build for Andodroid plaform
   android:
     needs: cache-toolchains-posix
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -231,9 +243,13 @@ jobs:
         run: hub release edit -a ${{ env.BUNDLE }}.tar.xz -m "" "${GITHUB_REF##*/}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #build for windows platform
   win:
     needs: cache-toolchains-win
-    runs-on: windows-2019
+    runs-on: windows-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -295,9 +311,13 @@ jobs:
         run: hub release edit -a ${{ env.BUNDLE }}.zip -m "" "${GITHUB_REF##*/}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #build for mac os platform
   mac:
     needs: cache-toolchains-mac
-    runs-on: macos-11
+    runs-on: macos-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -347,9 +367,13 @@ jobs:
         run: hub release edit -a ${{ env.BUNDLE }}.tar.xz -m "" "${GITHUB_REF##*/}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #build for IOS platform
   ios:
     needs: cache-toolchains-mac
-    runs-on: macos-11
+    runs-on: macos-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -380,9 +404,13 @@ jobs:
       - run: ccache -z
       - run: ./build.sh
       - run: ccache -s
+  #build for openwrt platform
   openwrt:
     needs: cache-toolchains-posix
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:

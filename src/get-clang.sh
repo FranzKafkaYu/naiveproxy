@@ -6,11 +6,12 @@ set -ex
 if [ "$BUILD_SYSROOT" -a ! -d ./"$WITH_SYSROOT/lib" ]; then
   ./build/linux/sysroot_scripts/sysroot-creator-naive.sh "$BUILD_SYSROOT"
 fi
-
+#get OpenWRT build dependencies
 if [ "$OPENWRT_FLAGS" ]; then
   ./get-openwrt.sh
 fi
 
+#get llvm-build associated
 if [ ! -d third_party/llvm-build/Release+Asserts/bin ]; then
   mkdir -p third_party/llvm-build/Release+Asserts
   clang_path="clang-$CLANG_REVISION.tgz"
@@ -31,6 +32,7 @@ if [ "$WITH_PGO" -a ! -f chrome/build/pgo_profiles/"$PGO_PATH" ]; then
   cd ../../..
 fi
 
+#get cargo for windows build
 if [ "$USE_SCCACHE" -a ! -f ~/.cargo/bin/sccache.exe ]; then
   sccache_url="https://github.com/mozilla/sccache/releases/download/0.2.12/sccache-0.2.12-x86_64-pc-windows-msvc.tar.gz"
   mkdir -p ~/.cargo/bin
@@ -45,6 +47,7 @@ if [ ! -f gn/out/gn ]; then
   rm gn.zip
 fi
 
+#get Android NDK tools for Android Build
 if [ "$USE_ANDROID_NDK" -a ! -d third_party/android_ndk ]; then
   android_ndk_version=$(grep android_ndk.git DEPS | cut -d"'" -f10)
   git clone --depth=1 --filter=blob:none --no-checkout https://chromium.googlesource.com/android_ndk.git third_party/android_ndk
